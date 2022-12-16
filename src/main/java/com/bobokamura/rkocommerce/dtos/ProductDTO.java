@@ -2,6 +2,7 @@ package com.bobokamura.rkocommerce.dtos;
 
 import com.bobokamura.rkocommerce.entities.Category;
 import com.bobokamura.rkocommerce.entities.Product;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,13 @@ import java.util.Set;
 @NoArgsConstructor
 public class ProductDTO {
     private Long id;
+    @NotBlank(message = "Campo requerido")
+    @Size(min = 3, max = 50, message = "Nome entre 3 e 50 caracteres!")
     private String name;
+    @NotBlank(message = "Campo requerido")
+    @Size(min = 10, message = "Descrição deve ter no mínimo 10 caracteres")
     private String description;
+    @Positive(message = "Preço deve ser um valor positivo")
     private Double price;
     private String imgUrl;
 
