@@ -6,7 +6,12 @@ import com.bobokamura.rkocommerce.entities.Category;
 import com.bobokamura.rkocommerce.entities.Product;
 import com.bobokamura.rkocommerce.repositories.CategoryRepository;
 import com.bobokamura.rkocommerce.repositories.ProductRepository;
+import com.bobokamura.rkocommerce.services.exceptions.DatabaseException;
+import com.bobokamura.rkocommerce.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +29,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
-        Product entity = repository.findById(id).get();
+        Product entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
         return new ProductDTO(entity, entity.getCategories());
     }
 
@@ -44,16 +49,25 @@ public class ProductService {
 
     @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
-        Product entity = repository.getReferenceById(id);
-        copyDtoToEntity(dto, entity);
-        entity = repository.save(entity);
-        return new ProductDTO(entity);
+        try {
+            Product entity = repository.getReferenceById(id);
+            copyDtoToEntity(dto, entity);
+            entity = repository.save(entity);
+            return new ProductDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id);
+        }
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DatabaseException(id);
+        }
     }
-
 
     private void copyDtoToEntity(ProductDTO dto, Product entity) {
         entity.setName(dto.getName());
