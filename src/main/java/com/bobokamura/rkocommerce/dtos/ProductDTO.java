@@ -2,7 +2,9 @@ package com.bobokamura.rkocommerce.dtos;
 
 import com.bobokamura.rkocommerce.entities.Category;
 import com.bobokamura.rkocommerce.entities.Product;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
