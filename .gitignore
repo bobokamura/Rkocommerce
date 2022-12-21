@@ -50,16 +50,12 @@ gradle-app.setting
 !gradle-wrapper.jar
 
 ### IntelliJ IDEA ###
-.idea
 *.iws
 *.iml
 *.ipr
 out/
 .idea/
 .idea_modules/
-*.iml
-*.ipr
-*.iws
 
 ### NetBeans ###
 /nbproject/private/
